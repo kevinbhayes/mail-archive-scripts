@@ -12,7 +12,7 @@ These scripts do not care about junk mail. They’ll archive those messages too.
 
 ## License 
 
-[Standard MIT license](License) applies.
+[Standard MIT license](LICENSE) applies.
 
 ## The Scripts
 
