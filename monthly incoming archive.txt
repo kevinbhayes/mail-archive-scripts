@@ -1,0 +1,54 @@
+property monthlyArchiveFolder : "Monthly Archive"
+
+using terms from application "Mail"
+	on perform mail action with messages theMessages for rule theRule
+		tell application "Mail"
+			if (count of theMessages) is greater than 0 then
+				repeat with theMessage in theMessages
+					set foldername to my monthlyFolderNameFromDate(date received of theMessage)
+					set topLevelMailbox to false
+					set isFolderThere to false
+					
+					if (not (exists mailbox monthlyArchiveFolder)) then
+						try
+							make new mailbox with properties {name:monthlyArchiveFolder}
+							set topLevelMailbox to true
+						on error errmsg number errn
+							set topLevelMailbox to false
+							display dialog errmsg & return & return & "error number: " & ¬
+								(errn as rich text)
+							exit repeat
+						end try
+					end if
+					if (topLevelMailbox and (exists mailbox (monthlyArchiveFolder & "/" & foldername))) then
+						--display dialog "Copy to here, folder already there"
+						duplicate theMessage to mailbox (monthlyArchiveFolder & "/" & foldername)
+					else
+						try
+							make new mailbox with properties {name:(monthlyArchiveFolder & "/" & foldername)}
+							set isFolderThere to true
+						on error errmsg number errn
+							set ifFolderThere to false
+							display dialog errmsg & return & return & "error number: " & ¬
+								(errn as rich text)
+							exit repeat
+						end try
+						if (isFolderThere) then
+							--display dialog "Copy to here, just made folder"
+							duplicate theMessage to mailbox (monthlyArchiveFolder & "/" & foldername)
+						end if
+					end if
+				end repeat
+			end if
+		end tell
+	end perform mail action with messages
+end using terms from
+
+on monthlyFolderNameFromDate(theDate)
+	set theMonth to (month of theDate) as integer
+	set theYear to year of theDate
+	if (theMonth < 10) then
+		set theMonth to "0" & theMonth as string
+	end if
+	return (theYear & "-" & theMonth as string) & " Incoming"
+end monthlyFolderNameFromDate

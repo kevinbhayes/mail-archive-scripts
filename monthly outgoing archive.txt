@@ -1,0 +1,55 @@
+property monthlyArchiveFolder : "Monthly Archive"
+-- note, if you edit this script, set the lastRunDate to a date the script was last run. Otherwise, it will re-archive all messages in your Sent foldrs
+-- if you don't edit this script, the date will automatically update each time the script is run
+property lastRunDate : date "Tuesday, January 1, 1980 at 12:00:00 AM"
+
+tell application "Mail"
+	set outgoingMessages to ((every message of sent mailbox) whose date sent > lastRunDate)
+	set lastRunDate to current date
+	if (count of outgoingMessages) is greater than 0 then
+		repeat with theMessage in outgoingMessages
+			set foldername to my monthlyFolderNameFromDate(date sent of theMessage)
+			set topLevelMailbox to false
+			set isFolderThere to false
+			
+			if (not (exists mailbox monthlyArchiveFolder)) then
+				try
+					make new mailbox with properties {name:monthlyArchiveFolder}
+					set topLevelMailbox to true
+				on error errmsg number errn
+					set topLevelMailbox to false
+					display dialog errmsg & return & return & "error number: " & ¬
+						(errn as rich text)
+					exit repeat
+				end try
+			end if
+			if (topLevelMailbox and (exists mailbox (monthlyArchiveFolder & "/" & foldername))) then
+				--display dialog "Copy to here, folder already there"
+				duplicate theMessage to mailbox (monthlyArchiveFolder & "/" & foldername)
+			else
+				try
+					make new mailbox with properties {name:(monthlyArchiveFolder & "/" & foldername)}
+					set isFolderThere to true
+				on error errmsg number errn
+					set ifFolderThere to false
+					display dialog errmsg & return & return & "error number: " & ¬
+						(errn as rich text)
+					exit repeat
+				end try
+				if (isFolderThere) then
+					--display dialog "Copy to here, just made folder"
+					duplicate theMessage to mailbox (monthlyArchiveFolder & "/" & foldername)
+				end if
+			end if
+		end repeat
+	end if
+end tell
+
+on monthlyFolderNameFromDate(theDate)
+	set theMonth to (month of theDate) as integer
+	set theYear to year of theDate
+	if (theMonth < 10) then
+		set theMonth to "0" & theMonth as string
+	end if
+	return (theYear & "-" & theMonth as string) & " Outgoing"
+end monthlyFolderNameFromDate

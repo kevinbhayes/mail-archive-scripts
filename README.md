@@ -28,6 +28,10 @@ The scripts do not move any messages. They make a copy so that you can still bro
 
 The outgoing mail script makes use of a property (named `lastRunDate`) to remember when it has last run. This prevents it from archiving the same Sent messages over and over again. If you edit the outgoing script, be sure to set the property to the date the script was last run, or else it will reset the property
 
+## Text versions
+
+Files in plain text format are included for reading convenience.
+
 ## Installation
 
 1. Move the scripts to `~/Library/Application Scripts/com.apple.Mail`
