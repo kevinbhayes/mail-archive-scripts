@@ -22,7 +22,9 @@ The scripts do not move any messages. They make a copy so that you can still bro
 
 `monthly incoming archive.scpt` will create a folder named `YYYY-MM Incoming` (if it does not already exist) and move all messages from the Inbox into this folder.
 
-### Outgoing Mail will create a folder named `YYYY-MM Outgoing` (if it does not already exist) and move all messages from the Sent folder into this folder.
+### Outgoing Mail
+
+`monthly outgoing archive.scpt` will create a folder named `YYYY-MM Outgoing` (if it does not already exist) and move all messages from the Sent folder into this folder.
 
 The outgoing mail script makes use of a property (named `lastRunDate`) to remember when it has last run. This prevents it from archiving the same Sent messages over and over again. If you edit the outgoing script, be sure to set the property to the date the script was last run, or else it will reset the property
 
